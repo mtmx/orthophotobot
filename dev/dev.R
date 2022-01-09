@@ -12,3 +12,9 @@ use_r("tweet_gif_orthophoto")
 # dependences
 usethis::use_package("dplyr")
 usethis::use_package("sf")
+usethis::use_package("stringr")
+usethis::use_package("magick")
+usethis::use_package("rtweet")
+
+
+devtools::check()

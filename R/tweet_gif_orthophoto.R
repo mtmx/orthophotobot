@@ -1,16 +1,11 @@
 
-library(rgdal)
-library(sf)
-library(raster)
-library(tidyverse)
-library(hrbrthemes)
-library(stringi)
-
-
 
 library(sf)
 library(stringr)
+library(dplyr)
 
+load("./data/poi.rda")
+load("./data/geo_communes.rda")
 
 # extraction d'un poi au hasard
 
@@ -74,10 +69,23 @@ my_gif <-  image_resize(c(ortho_histo, ortho_histo, ortho_actu,ortho_actu, ortho
   image_morph(15) %>%
   image_animate(fps=5, optimize = TRUE) %>%
   image_annotate(., "© IGN", size = 13, color = "white",
-                 # boxcolor = "pink",
                  degrees = 0,
                  location = "+552+580")
 
 
-image_write(my_gif, paste("./data/gif/ortho_poi.gif"))
+image_write(my_gif, "./data/gif/ortho_poi.gif")
 
+# tweet
+
+# Create Twitter token
+library(rtweet)
+orthophotobot_token <- rtweet::create_token(
+  app = "londonmapbot",
+  consumer_key =    Sys.getenv("TWITTER_API_KEY"),
+  consumer_secret = Sys.getenv("TWITTER_API_SECRET"),
+  access_token =    Sys.getenv("TWITTER_ACCESS_TOKEN"),
+  access_secret =   Sys.getenv("TWITTER_ACCESS_TOKEN_SECRET")
+)
+
+# post du tweet et de l'image HD
+post_tweet(status = "", media = "./data/gif/ortho_poi.gif", token = orthophotobot_token)
