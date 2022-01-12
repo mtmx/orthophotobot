@@ -2,7 +2,7 @@ name: tweet_gif_orthophoto
 
 on:
   schedule:
-    - cron: '0,35 * * * *'  # toutes les heures à '0 et '35'
+    - cron: '55 12 * * *'  # a midi
 
 jobs:
   tweet_gif_orthophoto-post:
@@ -19,3 +19,15 @@ jobs:
         run: Rscript -e 'install.packages(c("sf", "stringr", "dplyr","magick", "rtweet"), dependencies = TRUE)'
       - name: Create gif and post tweet
         run: Rscript tweet_gif_orthophoto.R
+
+   # Add new files in data folder, commit along with other modified files, push
+    - name: Commit files
+      run: |
+        git config --local user.name actions-user
+        git config --local user.email "actions@github.com"
+        git add data/*
+        git commit -am "GH ACTION OK $(date)"
+        git push origin main
+      env:
+        REPO_KEY: ${{secrets.TOKEN_GITHUB}}
+        username: github-actions
