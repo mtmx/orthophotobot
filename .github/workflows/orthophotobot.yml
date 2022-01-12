@@ -2,7 +2,7 @@ name: tweet_gif_orthophoto
 
 on:
   schedule:
-    - cron: '0 8,16,20 * * *'  # matin midi soir
+    - cron: '22 0/1 * * *'  # toutes les heures à '22
 
 jobs:
   tweet_gif_orthophoto-post:
