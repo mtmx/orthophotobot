@@ -5,6 +5,7 @@ usethis::use_readme_rmd( open = TRUE )
 
 usethis::use_data_raw( name = "carto_admin", open = TRUE )
 usethis::use_data_raw( name = "poi", open = TRUE )
+usethis::use_data_raw( name = "date_orthophotohisto", open = TRUE )
 
 ### ADD R FUNCTIONS AND THEIR DOCUMENTATION
 use_r("tweet_gif_orthophoto")

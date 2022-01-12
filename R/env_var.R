@@ -1,0 +1,8 @@
+
+Sys.setenv(TWITTER_API_KEY = "tDjC9wdNqPcpWhVqW5ZZJllmE")
+Sys.setenv(TWITTER_API_SECRET = "exxVn42X3Mg9DLIN4R8OCcrNeB4NpAY154FpEoRfHDeqO3bMvU")
+Sys.setenv(TWITTER_ACCESS_TOKEN = "1480217298933792773-JycfrYF79HAETCoTJOHGWUio88TqrF")
+Sys.setenv(TWITTER_ACCESS_TOKEN_SECRET = "vjTzzSGAivRzabklZ8mlmXWfBGTW5LrkLI1L0tIt2CmST")
+
+# twitter dev
+https://twitter.com/i/flow/login?input_flow_data=%7B%22requested_variant%22%3A%22eyJyZWRpcmVjdF9hZnRlcl9sb2dpbiI6Imh0dHBzOi8vZGV2ZWxvcGVyLnR3aXR0ZXIuY29tL2VuL3BvcnRhbC9wcm9qZWN0cy8xNDgwMjM1MzYxODg0NDEzOTU2L2FwcHMvMjMwNTA1NjAva2V5cyJ9%22%7D

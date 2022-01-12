@@ -72,6 +72,7 @@ bases_sites_archeo <-
   base_culture %>%
   filter(precision_equipement %in%  "Site archéologique") %>%
   filter(!is.na(nom)) %>%
+  filter(archeologie_detail %in% c("Oppidum", "Grotte", "Grotte Ornée", "Ville", "Thermes", "Allée Couverte", "Amphithéâtre", "Sanctuaire", "Tumulus", "Ensemble Mégalithique", "Forteresse", "Mausolée", "Fortification", "Église", "Habitat Fortifié", "Dolmen", "Temple", "Alignements", "Aqueduc", "Carrières")) %>%
   distinct(nom, .keep_all = T) %>%
   select(nom_poi = nom, latitude_poi = latitude, longitude_poi = longitude)
 
