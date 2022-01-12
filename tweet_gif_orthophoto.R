@@ -80,7 +80,7 @@ orthophoto_gif <-  image_resize(c(ortho_histo, ortho_histo, ortho_actu,ortho_act
   image_composite(., logo_ign, offset = "+474+485")
 
 image_write(orthophoto_gif,
-            "./data/gif/orthophoto_poi.gif")
+            paste0("./data/gif/orthophoto_poi_",rdm_point_nom,"_",rdm_point_comm, ".gif"))
 
 # tweet
 
@@ -99,6 +99,6 @@ post_tweet(status = paste0(rdm_point_nom, "\n",
                            rdm_point_comm, " (", rdm_point_dep,")\n",
                            emojis %>% filter(description %in% "camera") %>% pull(code), " ", rdm_point_annee_pdv_orthophotohisto, " / 2020", "\n",
                            emojis %>% filter(description %in% "world map") %>% pull(code), " ", rdm_point_url),
-           media = "./data/gif/orthophoto_poi.gif",
+           media = paste0("./data/gif/orthophoto_poi_",rdm_point_nom,"_",rdm_point_comm, ".gif"),
            token = orthophotobot_token)
 
