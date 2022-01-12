@@ -71,13 +71,13 @@ ortho_actu <- image_read( './data/jpg/img_ortho_actu_poi.jpg')
 ortho_histo <- image_read('./data/jpg/img_ortho_histo_poi.jpg')
 
 logo_ign <- image_read('./data/img/logo_ign.png') %>%
-  image_scale(., "26")
+  image_scale(., "25")
 
 
-orthophoto_gif <-  image_resize(c(ortho_histo, ortho_histo, ortho_actu,ortho_actu, ortho_histo), '540x540!') %>%
+orthophoto_gif <-  image_resize(c(ortho_histo, ortho_histo, ortho_actu,ortho_actu, ortho_histo), '500x500!') %>%
   image_morph(8) %>%
   image_animate(fps=5, optimize = T) %>%
-  image_composite(., logo_ign, offset = "+514+525")
+  image_composite(., logo_ign, offset = "+474+485")
 
 image_write(orthophoto_gif,
             "./data/gif/orthophoto_poi.gif")
