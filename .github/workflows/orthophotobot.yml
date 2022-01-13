@@ -20,7 +20,7 @@ jobs:
            # Set-up R
       - name: Install packages
         run: |
-          install.packages(c(sf", "stringr", "dplyr","magick", "remotes"),type="binary")
+          install.packages(c("sf", "stringr", "dplyr","magick", "remotes"),type="binary")
           remotes::install_github("ropensci/rtweet")
         shell: Rscript {0}
       - name: Create gif and post tweet
