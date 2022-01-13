@@ -2,10 +2,10 @@ name: tweet_gif_orthophoto
 
 on:
   schedule:
-    - cron: '50 0/1 * * *'  # a midi
+    - cron: '50 0/2 * * *'  # a midi
 
 jobs:
-  tweet_gif_orthophoto-post:
+  autoscrape:
     runs-on: macOS-latest
     env:
       TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
@@ -15,11 +15,14 @@ jobs:
     steps:
       - uses: actions/checkout@master
       - uses: r-lib/actions/setup-r@master
+      # - name: Install packages
+      #   run: Rscript -e 'install.packages(c("sf", "stringr", "dplyr","magick", "rtweet"), dependencies = TRUE)'
+           # Set-up R
       - name: Install packages
-        # run: Rscript -e 'install.packages(c("sf", "stringr", "dplyr","magick", "rtweet"), dependencies = TRUE)'
         run: |
-        install.packages(c("sf", "stringr", "dplyr","magick"),type="binary")
-        remotes::install_github("ropensci/rtweet")
+          install.packages(c(sf", "stringr", "dplyr","magick", "remotes"),type="binary")
+          remotes::install_github("ropensci/rtweet")
+        shell: Rscript {0}
       - name: Create gif and post tweet
         run: Rscript tweet_gif_orthophoto.R
 
