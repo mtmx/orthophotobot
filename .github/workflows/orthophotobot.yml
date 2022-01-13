@@ -2,7 +2,7 @@ name: tweet_gif_orthophoto
 
 on:
   schedule:
-    - cron: '55 12 * * *'  # a midi
+    - cron: '30 17 * * *'  # a midi
 
 jobs:
   tweet_gif_orthophoto-post:

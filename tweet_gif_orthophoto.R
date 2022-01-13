@@ -115,6 +115,6 @@ post_tweet(status = paste0(rdm_point_nom, "\n",
                            emojis %>% filter(description %in% "camera") %>% pull(code), " ", rdm_point_annee_pdv_orthophotohisto, " / 2020", "\n",
                            emojis %>% filter(description %in% "world map") %>% pull(code), " ", rdm_point_url),
            # media = paste0("./data/gif/orthophoto_poi_",rdm_point_nom,"_",rdm_point_comm, ".gif"),
-           media = temp_gif,
+           # media = temp_gif,
            token = orthophotobot_token)
 
