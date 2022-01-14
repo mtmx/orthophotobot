@@ -77,7 +77,7 @@ url_img_ortho <- paste0("https://wxs.ign.fr/ortho/geoportail/r/wms?LAYERS=ORTHOI
 
 download.file(url = url_img_ortho,
               # destfile = './data/jpg/img_ortho_actu_poi.jpg',
-              destfile = paste0("./data/jpg/img_ortho_actu_poi_",rdm_point_nom,"_",rdm_point_comm, "jpg"),
+              destfile = paste0("./data/jpg/img_ortho_actu_poi_",rdm_point_nom,"_",rdm_point_comm, ".jpg"),
               mode = 'wb')
 
 # orthohisto
@@ -91,7 +91,7 @@ url_img_ortho_histo <- paste0("https://wxs.ign.fr/orthohisto/geoportail/r/wms?LA
 
 download.file(url = url_img_ortho_histo,
               # destfile = './data/jpg/img_ortho_histo_poi.jpg',
-              destfile = paste0("./data/jpg/img_ortho_histo_poi_",rdm_point_nom,"_",rdm_point_comm, "jpg"),
+              destfile = paste0("./data/jpg/img_ortho_histo_poi_",rdm_point_nom,"_",rdm_point_comm, ".jpg"),
               mode = 'wb')
 
 usethis::ui_done("download images")
@@ -102,8 +102,8 @@ library(magick)
 
 # ortho_actu <- image_read( './data/jpg/img_ortho_actu_poi.jpg')
 # ortho_histo <- image_read('./data/jpg/img_ortho_histo_poi.jpg')
-ortho_actu <- image_read( paste0("./data/jpg/img_ortho_actu_poi_",rdm_point_nom,"_",rdm_point_comm, "jpg"))
-ortho_histo <- image_read( paste0("./data/jpg/img_ortho_histo_poi_",rdm_point_nom,"_",rdm_point_comm, "jpg"))
+ortho_actu <- image_read( paste0("./data/jpg/img_ortho_actu_poi_",rdm_point_nom,"_",rdm_point_comm, ".jpg"))
+ortho_histo <- image_read( paste0("./data/jpg/img_ortho_histo_poi_",rdm_point_nom,"_",rdm_point_comm, ".jpg"))
 # ortho_actu <- image_read( temp_img_ortho)
 # ortho_histo <- image_read(temp_img_orthohisto)
 
