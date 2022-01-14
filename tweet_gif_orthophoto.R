@@ -4,6 +4,7 @@ library(sf)
 library(stringr)
 library(dplyr)
 library(rtweet)
+library(usethis)
 
 orthophotobot_token <- rtweet::create_token(
   app = "orthophotobot",
