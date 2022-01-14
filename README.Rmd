@@ -14,3 +14,7 @@ knitr::opts_chunk$set(
 ```
 
 # orthophotobot
+
+<!-- badges: start -->
+[![R build status](https://github.com/mtmx/orthophotobot/workflows/R-CMD-check/badge.svg)](https://github.com/mtmx/orthophotobot/actions)
+<!-- badges: end -->

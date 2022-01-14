@@ -1,36 +1,48 @@
+# Hourly scraping
 name: tweet_gif_orthophoto
 
+# Controls when the action will run.
 on:
   schedule:
-    - cron: '50 0/2 * * *'  # a midi
+    - cron:  '50 0/2 * * *'
+#on:
+#  push:
+#    branches:
+#      - main
 
 jobs:
-  orthophotobot_post:
-    runs-on: macOS-latest
+  autoscrape:
+    # The type of runner that the job will run on
+    runs-on: macos-latest
     env:
       TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
       TWITTER_API_SECRET: ${{ secrets.TWITTER_API_SECRET }}
       TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
       TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
       GITHUB_PAT: ${{ secrets.TOKEN_GITHUB }}
+    # Load repo and install R
     steps:
-      - uses: actions/checkout@master
-      - uses: r-lib/actions/setup-r@master
-      # - name: Install packages
-      #   run: Rscript -e 'install.packages(c("sf", "stringr", "dplyr","magick", "rtweet"), dependencies = TRUE)'
-           # Set-up R
-      # - name: Install packages
-      #   run: |
-      #     install.packages(c("sf", "stringr", "dplyr","magick", "remotes"),type="binary")
-      #     remotes::install_github("ropensci/rtweet")
-      #   shell: Rscript {0}
-    # Set-up R
+    - uses: actions/checkout@master
+    - uses: r-lib/actions/setup-r@master
+
+     # Set-up R
     - name: Install packages
       run: |
-        R -e 'install.packages("dplyr")'
-        R -e 'install.packages("stringr")'
-        R -e 'install.packages("sf")'
-        R -e 'install.packages("magick")'
-        R -e 'install.packages("rtweet")'
-      - name: Create gif and post tweet
-        run: Rscript tweet_gif_orthophoto.R
+        install.packages(c("sf", "stringr", "dplyr","magick","rtweet", "rvest"),type="binary")
+      shell: Rscript {0}
+
+    # Run R script
+    - name: script_base
+      run: Rscript tweet_gif_orthophoto.R
+
+ # Add new files in data folder, commit along with other modified files, push
+    - name: Commit files
+      run: |
+        git config --local user.name actions-user
+        git config --local user.email "actions@github.com"
+        git add data/*
+        git commit -am "GH ACTION OK $(date)"
+        git push origin main
+      env:
+        REPO_KEY: ${{secrets.TOKEN_GITHUB}}
+        username: github-actions
