@@ -4,7 +4,7 @@ name: tweet_gif_orthophoto
 # Controls when the action will run.
 on:
   schedule:
-    - cron:  '50 0/2 * * *'
+    - cron:  '30 0/1 * * *'
 #on:
 #  push:
 #    branches:
@@ -42,7 +42,7 @@ jobs:
         git config --local user.email "actions@github.com"
         git add data/*
         git commit -am "GH ACTION OK $(date)"
-        git push origin main
+        git push origin master
       env:
         REPO_KEY: ${{secrets.TOKEN_GITHUB}}
         env: github-actions
