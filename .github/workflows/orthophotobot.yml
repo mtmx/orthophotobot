@@ -34,15 +34,3 @@ jobs:
         R -e 'install.packages("rtweet")'
       - name: Create gif and post tweet
         run: Rscript tweet_gif_orthophoto.R
-
- # Add new files in data folder, commit along with other modified files, push
-    - name: Commit files
-      run: |
-        git config --local user.name actions-user
-        git config --local user.email "actions@github.com"
-        git add data/*
-        git commit -am "GH ACTION Headlines $(date)"
-        git push origin main
-      env:
-        REPO_KEY: ${{secrets.TOKEN_GITHUB}}
-        username: github-actions
