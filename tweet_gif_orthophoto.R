@@ -51,36 +51,37 @@ ymax_bbox <- bbox_xy_wgs1984$ymax %>% as.vector()
 
 url_img_ortho <- paste0("https://wxs.ign.fr/ortho/geoportail/r/wms?LAYERS=ORTHOIMAGERY.ORTHOPHOTOS.BDORTHO&EXCEPTIONS=text/xml&FORMAT=image/jpeg&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&STYLES=&CRS=EPSG:4326&BBOX=",ymin_bbox,",",xmin_bbox,",",ymax_bbox,",",xmax_bbox,"&WIDTH=1256&HEIGHT=1256")
 
-temp_img_ortho <- tempfile()
-download.file(url_img_ortho,
-              destfile =  temp_img_ortho,
+# temp_img_ortho <- tempfile()
+# download.file(url_img_ortho,
+#               destfile =  temp_img_ortho,
+#               mode = 'wb')
+
+download.file(url = url_img_ortho,
+              destfile = './data/jpg/img_ortho_actu_poi.jpg',
               mode = 'wb')
 
-# download.file(url = url_img_ortho,
-#               destfile = './data/jpg/img_ortho_actu_poi.jpg',
-#               mode = 'wb')
 # orthohisto
 
 url_img_ortho_histo <- paste0("https://wxs.ign.fr/orthohisto/geoportail/r/wms?LAYERS=ORTHOIMAGERY.ORTHOPHOTOS.1950-1965&EXCEPTIONS=text/xml&FORMAT=image/jpeg&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&STYLES=&CRS=EPSG:4326&BBOX=",ymin_bbox,",",xmin_bbox,",",ymax_bbox,",",xmax_bbox,"&WIDTH=3000&HEIGHT=3000")
 
-temp_img_orthohisto <- tempfile()
-download.file(url_img_ortho_histo,
-              destfile =  temp_img_orthohisto,
-              mode = 'wb')
-
-# download.file(url = url_img_ortho_histo,
-#               destfile = './data/jpg/img_ortho_histo_poi.jpg',
+# temp_img_orthohisto <- tempfile()
+# download.file(url_img_ortho_histo,
+#               destfile =  temp_img_orthohisto,
 #               mode = 'wb')
+
+download.file(url = url_img_ortho_histo,
+              destfile = './data/jpg/img_ortho_histo_poi.jpg',
+              mode = 'wb')
 
 
 # création du gif
 
 library(magick)
 
-# ortho_actu <- image_read( './data/jpg/img_ortho_actu_poi.jpg')
-# ortho_histo <- image_read('./data/jpg/img_ortho_histo_poi.jpg')
-ortho_actu <- image_read( temp_img_ortho)
-ortho_histo <- image_read(temp_img_orthohisto)
+ortho_actu <- image_read( './data/jpg/img_ortho_actu_poi.jpg')
+ortho_histo <- image_read('./data/jpg/img_ortho_histo_poi.jpg')
+# ortho_actu <- image_read( temp_img_ortho)
+# ortho_histo <- image_read(temp_img_orthohisto)
 
 logo_ign <- image_read('./data/img/logo_ign.png') %>%
   image_scale(., "25")
@@ -91,29 +92,29 @@ orthophoto_gif <-  image_resize(c(ortho_histo, ortho_histo, ortho_actu,ortho_act
   image_animate(fps=5, optimize = T) %>%
   image_composite(., logo_ign, offset = "+474+485")
 
-# image_write(orthophoto_gif,
-#             paste0("./data/gif/orthophoto_poi_",rdm_point_nom,"_",rdm_point_comm, ".gif"))
-temp_gif <- tempfile()
 image_write(orthophoto_gif,
-            temp_gif)
+            paste0("./data/gif/orthophoto_poi_",rdm_point_nom,"_",rdm_point_comm, ".gif"))
+# temp_gif <- tempfile()
+# image_write(orthophoto_gif,
+#             temp_gif)
 
 # tweet
 
 library(rtweet)
-# orthophotobot_token <- rtweet::create_token(
-#   app = "orthophotobot",
-#   consumer_key =    Sys.getenv("TWITTER_API_KEY"),
-#   consumer_secret = Sys.getenv("TWITTER_API_SECRET"),
-#   access_token =    Sys.getenv("TWITTER_ACCESS_TOKEN"),
-#   access_secret =   Sys.getenv("TWITTER_ACCESS_TOKEN_SECRET")
-# )
-orthophotobot_token <- rtweet::rtweet_bot(
-  api_key = Sys.getenv("TWITTER_API_KEY"),
-  api_secret = Sys.getenv("TWITTER_API_SECRET"),
-  access_token = Sys.getenv("TWITTER_ACCESS_TOKEN"),
-  access_secret = Sys.getenv("TWITTER_ACCESS_TOKEN_SECRET")
+orthophotobot_token <- rtweet::create_token(
+  app = "orthophotobot",
+  consumer_key =    Sys.getenv("TWITTER_API_KEY"),
+  consumer_secret = Sys.getenv("TWITTER_API_SECRET"),
+  access_token =    Sys.getenv("TWITTER_ACCESS_TOKEN"),
+  access_secret =   Sys.getenv("TWITTER_ACCESS_TOKEN_SECRET")
 )
-rtweet::auth_as(orthophotobot_token)
+# orthophotobot_token <- rtweet::rtweet_bot(
+#   api_key = Sys.getenv("TWITTER_API_KEY"),
+#   api_secret = Sys.getenv("TWITTER_API_SECRET"),
+#   access_token = Sys.getenv("TWITTER_ACCESS_TOKEN"),
+#   access_secret = Sys.getenv("TWITTER_ACCESS_TOKEN_SECRET")
+# )
+# rtweet::auth_as(orthophotobot_token)
 
 # post du tweet
 post_tweet(status = paste0(rdm_point_nom, "\n",

@@ -5,7 +5,7 @@ on:
     - cron: '50 0/2 * * *'  # a midi
 
 jobs:
-  autoscrape:
+  orthophotobot_post:
     runs-on: macOS-latest
     env:
       TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
@@ -19,12 +19,30 @@ jobs:
       # - name: Install packages
       #   run: Rscript -e 'install.packages(c("sf", "stringr", "dplyr","magick", "rtweet"), dependencies = TRUE)'
            # Set-up R
-      - name: Install packages
-        run: |
-          install.packages(c("sf", "stringr", "dplyr","magick", "remotes"),type="binary")
-          remotes::install_github("ropensci/rtweet")
-        shell: Rscript {0}
+      # - name: Install packages
+      #   run: |
+      #     install.packages(c("sf", "stringr", "dplyr","magick", "remotes"),type="binary")
+      #     remotes::install_github("ropensci/rtweet")
+      #   shell: Rscript {0}
+    # Set-up R
+    - name: Install packages
+      run: |
+        R -e 'install.packages("dplyr")'
+        R -e 'install.packages("stringr")'
+        R -e 'install.packages("sf")'
+        R -e 'install.packages("magick")'
+        R -e 'install.packages("rtweet")'
       - name: Create gif and post tweet
         run: Rscript tweet_gif_orthophoto.R
 
-
+ # Add new files in data folder, commit along with other modified files, push
+    - name: Commit files
+      run: |
+        git config --local user.name actions-user
+        git config --local user.email "actions@github.com"
+        git add data/*
+        git commit -am "GH ACTION Headlines $(date)"
+        git push origin main
+      env:
+        REPO_KEY: ${{secrets.TOKEN_GITHUB}}
+        username: github-actions
