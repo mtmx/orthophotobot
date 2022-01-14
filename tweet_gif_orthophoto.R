@@ -103,7 +103,7 @@ library(magick)
 # ortho_actu <- image_read( './data/jpg/img_ortho_actu_poi.jpg')
 # ortho_histo <- image_read('./data/jpg/img_ortho_histo_poi.jpg')
 ortho_actu <- image_read( paste0("./data/jpg/img_ortho_actu_poi_",rdm_point_nom,"_",rdm_point_comm, "jpg"))
-ortho_actu <- image_read( paste0("./data/jpg/img_ortho_histo_poi_",rdm_point_nom,"_",rdm_point_comm, "jpg"))
+ortho_histo <- image_read( paste0("./data/jpg/img_ortho_histo_poi_",rdm_point_nom,"_",rdm_point_comm, "jpg"))
 # ortho_actu <- image_read( temp_img_ortho)
 # ortho_histo <- image_read(temp_img_orthohisto)
 
