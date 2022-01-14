@@ -63,6 +63,8 @@ xmax_bbox <- bbox_xy_wgs1984$xmax %>% as.vector()
 ymin_bbox <- bbox_xy_wgs1984$ymin %>% as.vector()
 ymax_bbox <- bbox_xy_wgs1984$ymax %>% as.vector()
 
+usethis::ui_done("poi")
+
 # téléchargement des images
 
 url_img_ortho <- paste0("https://wxs.ign.fr/ortho/geoportail/r/wms?LAYERS=ORTHOIMAGERY.ORTHOPHOTOS.BDORTHO&EXCEPTIONS=text/xml&FORMAT=image/jpeg&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&STYLES=&CRS=EPSG:4326&BBOX=",ymin_bbox,",",xmin_bbox,",",ymax_bbox,",",xmax_bbox,"&WIDTH=1256&HEIGHT=1256")
@@ -73,7 +75,8 @@ url_img_ortho <- paste0("https://wxs.ign.fr/ortho/geoportail/r/wms?LAYERS=ORTHOI
 #               mode = 'wb')
 
 download.file(url = url_img_ortho,
-              destfile = './data/jpg/img_ortho_actu_poi.jpg',
+              # destfile = './data/jpg/img_ortho_actu_poi.jpg',
+              destfile = paste0("./data/jpg/img_ortho_actu_poi_",rdm_point_nom,"_",rdm_point_comm, "jpg"),
               mode = 'wb')
 
 # orthohisto
@@ -86,16 +89,20 @@ url_img_ortho_histo <- paste0("https://wxs.ign.fr/orthohisto/geoportail/r/wms?LA
 #               mode = 'wb')
 
 download.file(url = url_img_ortho_histo,
-              destfile = './data/jpg/img_ortho_histo_poi.jpg',
+              # destfile = './data/jpg/img_ortho_histo_poi.jpg',
+              destfile = paste0("./data/jpg/img_ortho_histo_poi_",rdm_point_nom,"_",rdm_point_comm, "jpg"),
               mode = 'wb')
 
+usethis::ui_done("download images")
 
 # création du gif
 
 library(magick)
 
-ortho_actu <- image_read( './data/jpg/img_ortho_actu_poi.jpg')
-ortho_histo <- image_read('./data/jpg/img_ortho_histo_poi.jpg')
+# ortho_actu <- image_read( './data/jpg/img_ortho_actu_poi.jpg')
+# ortho_histo <- image_read('./data/jpg/img_ortho_histo_poi.jpg')
+ortho_actu <- image_read( paste0("./data/jpg/img_ortho_actu_poi_",rdm_point_nom,"_",rdm_point_comm, "jpg"))
+ortho_actu <- image_read( paste0("./data/jpg/img_ortho_histo_poi_",rdm_point_nom,"_",rdm_point_comm, "jpg"))
 # ortho_actu <- image_read( temp_img_ortho)
 # ortho_histo <- image_read(temp_img_orthohisto)
 
@@ -114,6 +121,7 @@ image_write(orthophoto_gif,
 # image_write(orthophoto_gif,
 #             temp_gif)
 
+usethis::ui_done("creation gif")
 
 # post du tweet
 post_tweet(status = paste0(rdm_point_nom, "\n",
@@ -124,3 +132,4 @@ post_tweet(status = paste0(rdm_point_nom, "\n",
            # media = temp_gif,
            token = orthophotobot_token)
 
+usethis::ui_done("post tweet")
