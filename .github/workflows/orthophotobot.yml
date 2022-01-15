@@ -4,7 +4,7 @@ name: tweet_gif_orthophoto
 # Controls when the action will run.
 on:
   schedule:
-    - cron:  '0 0/1 * * *'
+    - cron:  '0 8,13,19 * * *'
 #on:
 #  push:
 #    branches:
