@@ -15,47 +15,6 @@ base_stades <- base_sport_equip %>%
 
 rm(base_sport_equip)
 
-
-# péages
-
-library(ows4R)
-library(httr)
-library(purrr)
-api_topo <- "https://wxs.ign.fr/topographie/geoportail/wfs"
-topo_client <- WFSClient$new(api_topo,
-                             serviceVersion = "2.0.0")
-topo_client$getFeatureTypes(pretty = TRUE)
-
-url <- parse_url(api_topo)
-
-url$query <- list(service = "wfs",
-                  request = "GetFeature",
-                  nature = "Port",
-                  srsName = "EPSG:2154",
-                  typename = "BDTOPO_V3:equipement_de_transport"
-
-)
-
-# avec filtre
-url$query <- list(service = "wfs",
-                  #version = "2.0.0", # optional
-                  request = "GetFeature",
-                  # typename = "BDTOPO_V3:equipement_de_transport",
-                  # typename = "BDTOPO_V3:terrain_de_sport",
-                  # typename = "BDTOPO_V3:plan_d_eau",
-                  typename = "BDTOPO_V3:equipement_de_transport",
-                  srsName = "EPSG:2154",
-                  # filter = "<Filter><PropertyIsEqualTo><PropertyName>regions:nature</PropertyName><Literal>'Vlaams Gewest'</Literal></PropertyIsEqualTo></Filter>"
-                  # cql_filter="nature='Stade'",
-                  cql_filter = "nature_detaillee='Arènes';statut_du_toponyme='Collecté'"
-                  # "statut_du_toponyme='Collecté'"
-)
-
-request <- build_url(url)
-bdtopo_equip_transport <- read_sf(request)
-
-
-
 # culture
 
 library(janitor)
@@ -93,5 +52,73 @@ poi <- base_stades %>% mutate(type_poi = "stades") %>%
   rbind.data.frame(bases_espaces_proteges %>% mutate(type_poi = "unesco"))
 
 rm(base_stades, bases_sites_archeo,bases_espaces_proteges)
+
+
+# ajout de sources péages
+
+library(ows4R)
+library(httr)
+library(sf)
+
+api_topo <- "https://wxs.ign.fr/topographie/geoportail/wfs"
+topo_client <- WFSClient$new(api_topo,
+                             serviceVersion = "2.0.0")
+topo_client$getFeatureTypes(pretty = TRUE)
+
+url <- parse_url(api_topo)
+
+url$query <- list(service = "wfs",
+                  request = "GetFeature",
+                  typename = "BDTOPO_V3:equipement_de_transport",
+                  srsName = "EPSG:2154",
+                  cql_filter="nature='Péage'"
+)
+
+request <- build_url(url)
+
+bdtopo_peage <- read_sf(request) %>% filter(importance <= 5 & !is.na(toponyme) ) %>%
+  mutate(date_creation = as.Date(date_creation)) %>%
+  filter(date_creation <= as.Date("2020-01-01", format = "%Y-%m-%d"))  %>%
+  select(nom_poi = toponyme ) %>%
+  mutate(type_poi = "péages")
+
+library(purrr)
+bdtopo_peage <- bdtopo_peage %>%
+  st_transform(4326) %>%
+mutate(longitude_poi = map_dbl(geometrie, ~st_centroid(.x)[[1]]),
+       latitude_poi = map_dbl(geometrie, ~st_centroid(.x)[[2]])) %>%
+  st_drop_geometry()
+
+
+# phares
+
+url$query <- list(service = "wfs",
+                  request = "GetFeature",
+                  typename = "BDTOPO_V3:construction_ponctuelle",
+                  srsName = "EPSG:2154",
+                  cql_filter="nature='Phare'"
+)
+
+request <- build_url(url)
+
+bdtopo_phare <- read_sf(request) %>% filter(importance <= 3 & !is.na(toponyme) )  %>%
+  select(nom_poi = toponyme ) %>%
+  mutate(type_poi = "phares")  %>%
+  st_transform(4326) %>%
+  mutate(longitude_poi = map_dbl(geometrie, ~st_centroid(.x)[[1]]),
+         latitude_poi = map_dbl(geometrie, ~st_centroid(.x)[[2]])) %>%
+  st_drop_geometry()
+
+
+
+# concaténation poi
+
+poi <- poi %>%
+  rbind.data.frame(bdtopo_peage %>% mutate(type_poi = "peages"))  %>%
+  rbind.data.frame(bdtopo_phare %>% mutate(type_poi = "phares"))
+
+rm(bdtopo_peage)
+rm(bdtopo_phare)
+
 
 usethis::use_data(poi, overwrite = TRUE)

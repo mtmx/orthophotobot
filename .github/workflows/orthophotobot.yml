@@ -1,10 +1,9 @@
-# Hourly scraping
 name: tweet_gif_orthophoto
 
 # Controls when the action will run.
 on:
   schedule:
-    - cron:  '0 8,13,19 * * *'
+    - cron:  '0 6,11,17 * * *'
 #on:
 #  push:
 #    branches:

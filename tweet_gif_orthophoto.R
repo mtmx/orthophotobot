@@ -47,6 +47,14 @@ rdm_point_annee_pdv_orthophotohisto <- rdm_point %>% st_join(geo_communes) %>% s
 lon_poi <- rdm_point %>% pull(longitude_poi)
 lat_poi <- rdm_point %>% pull(latitude_poi)
 
+# suppression du poi dans le fichier source
+
+poi <- poi %>%
+  filter(!latitude_poi == lat_poi & !longitude_poi == lon_poi)
+
+usethis::use_data(poi, overwrite = TRUE)
+
+
 # url geoportail
 rdm_point_url <- paste0("https://www.geoportail.gouv.fr/carte?c=",lon_poi,",",lat_poi,"&z=16&l0=ORTHOIMAGERY.ORTHOPHOTOS::GEOPORTAIL:OGC:WMTS(1)&l1=ORTHOIMAGERY.ORTHOPHOTOS.1950-1965::GEOPORTAIL:OGC:WMTS(1)&permalink=yes")
 
