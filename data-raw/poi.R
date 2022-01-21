@@ -120,5 +120,14 @@ poi <- poi %>%
 rm(bdtopo_peage)
 rm(bdtopo_phare)
 
+# suppression des poi hors contours communaux
+poi <- poi %>%
+  st_as_sf(coords = c("longitude_poi", "latitude_poi"),
+           crs = 4326, remove = FALSE) %>%
+  st_join(geo_communes, join = st_within) %>%
+  filter(!is.na(INSEE_COM)) %>%
+  st_drop_geometry() %>%
+  select(c(nom_poi, latitude_poi, longitude_poi, type_poi))
+
 
 usethis::use_data(poi, overwrite = TRUE)
