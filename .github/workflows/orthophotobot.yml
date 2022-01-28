@@ -27,7 +27,7 @@ jobs:
      # Set-up R
     - name: Install packages
       run: |
-        install.packages(c("sf", "stringr", "dplyr","magick","rtweet", "rvest", "usethis"),type="binary")
+        install.packages(c("sf", "stringr", "dplyr","magick","rtweet", "rvest", "usethis", "magrittr"),type="binary")
       shell: Rscript {0}
 
     # Run R script
