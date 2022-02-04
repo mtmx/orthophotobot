@@ -3,7 +3,7 @@ name: tweet_gif_orthophoto
 # Controls when the action will run.
 on:
   schedule:
-    - cron:  '0 6,11,19 * * *'
+    - cron:  '0 6,12,19 * * *'
 #on:
 #  push:
 #    branches:
@@ -27,7 +27,7 @@ jobs:
      # Set-up R
     - name: Install packages
       run: |
-        install.packages(c("sf", "stringr", "dplyr","magick","rtweet", "rvest", "usethis", "magrittr"), dependencies = TRUE)
+        install.packages(c("rgdal", "sf", "stringr", "dplyr","magick","rtweet", "rvest", "usethis", "magrittr"),binary = TRUE, dependencies = TRUE)
       shell: Rscript {0}
 
     # Run R script
