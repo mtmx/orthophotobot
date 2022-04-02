@@ -109,16 +109,79 @@ bdtopo_phare <- read_sf(request) %>% filter(importance <= 3 & !is.na(toponyme) )
          latitude_poi = map_dbl(geometrie, ~st_centroid(.x)[[2]])) %>%
   st_drop_geometry()
 
+# chateaux
+
+url$query <- list(service = "wfs",
+                  request = "GetFeature",
+                  typename = "BDTOPO_V3:zone_d_habitation",
+                  srsName = "EPSG:2154",
+                  cql_filter="nature='Château'"
+)
+
+request <- build_url(url)
+
+bdtopo_chateau <- read_sf(request) %>% filter(importance <= 4 & !is.na(toponyme) )  %>%
+  select(nom_poi = toponyme ) %>%
+  mutate(type_poi = "chateaux")  %>%
+  st_centroid() %>%
+  st_transform(4326) %>%
+  mutate(longitude_poi = map_dbl(geometrie, ~st_centroid(.x)[[1]]),
+         latitude_poi = map_dbl(geometrie, ~st_centroid(.x)[[2]])) %>%
+  st_drop_geometry()
+
+
+# lotissements
+
+url$query <- list(service = "wfs",
+                  request = "GetFeature",
+                  typename = "BDTOPO_V3:zone_d_habitation",
+                  srsName = "EPSG:2154",
+                  cql_filter="nature_detaillee='Lotissement'"
+)
+
+request <- build_url(url)
+
+bdtopo_lotissements <- read_sf(request) %>% filter(importance <= 6 & !is.na(toponyme) )  %>%
+  sample_n(300) %>%
+  select(nom_poi = toponyme ) %>%
+
+  mutate(type_poi = "lotissements")  %>%
+  st_centroid() %>%
+  st_transform(4326) %>%
+  mutate(longitude_poi = map_dbl(geometrie, ~st_centroid(.x)[[1]]),
+         latitude_poi = map_dbl(geometrie, ~st_centroid(.x)[[2]])) %>%
+  st_drop_geometry()
+
+# plages
+
+url$query <- list(service = "wfs",
+                  request = "GetFeature",
+                  typename = "BDTOPO_V3:detail_orographique",
+                  srsName = "EPSG:2154",
+                  cql_filter="nature='Plage'"
+)
+
+request <- build_url(url)
+
+bdtopo_plage <- read_sf(request) %>% filter(importance <= 4 & !is.na(toponyme) )  %>%
+  select(nom_poi = toponyme ) %>%
+  mutate(type_poi = "plages")  %>%
+  st_transform(4326) %>%
+  mutate(longitude_poi = map_dbl(geometrie, ~st_centroid(.x)[[1]]),
+         latitude_poi = map_dbl(geometrie, ~st_centroid(.x)[[2]])) %>%
+  st_drop_geometry()
 
 
 # concaténation poi
 
 poi <- poi %>%
-  rbind.data.frame(bdtopo_peage %>% mutate(type_poi = "peages"))  %>%
-  rbind.data.frame(bdtopo_phare %>% mutate(type_poi = "phares"))
+  rbind.data.frame(bdtopo_chateau)  %>%
+  rbind.data.frame(bdtopo_plage ) %>%
+  rbind.data.frame(bdtopo_lotissements)
 
-rm(bdtopo_peage)
-rm(bdtopo_phare)
+rm(bdtopo_chateau)
+rm(bdtopo_plage)
+rm(bdtopo_lotissements)
 
 # suppression des poi hors contours communaux
 poi <- poi %>%
