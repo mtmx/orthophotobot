@@ -27,9 +27,8 @@ jobs:
      # Set-up R
     - name: Install packages
       run: |
-        install.packages(c("dplyr","stringr", "magick","remotes", "rvest", "usethis", "magrittr"),type="binary")
+        install.packages(c("dplyr","stringr", "magick","remotes", "rvest", "sf", "usethis", "magrittr"),type="binary")
         install.packages("rtweet", repos = 'https://ropensci.r-universe.dev')
-        remotes::install_github("r-spatial/sf")
       shell: Rscript {0}
 
     # Run R script
