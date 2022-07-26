@@ -18,6 +18,7 @@ orthophotobot_token <- rtweet::create_token(
 load("./data/poi.rda")
 load("./data/geo_communes.rda")
 load("./data/dates_orthophotohisto_tab.rda")
+load("./data/emojis.rda")
 
 # extraction d'un poi au hasard
 
