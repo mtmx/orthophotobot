@@ -115,11 +115,13 @@ image_write(orthophoto_gif,
 usethis::ui_done("creation gif")
 
 # post du tweet
-post_tweet(status = paste0(rdm_point_nom, "\n",
+post_tweet(
+          status = paste0(rdm_point_nom, "\n",
                            rdm_point_comm, " (", rdm_point_dep,")\n",
                            emojis %>% filter(description %in% "camera") %>% pull(code), " ", rdm_point_annee_pdv_orthophotohisto, " / 2020", "\n",
                            emojis %>% filter(description %in% "world map") %>% pull(code), " ", rdm_point_url),
            media = paste0("./data/gif/orthophoto_poi_",lat_poi,"_",lon_poi, ".gif"),
+          # media = paste0("./data/gif/orthophoto_poi_43.4635328460246_0.239390627762974.gif"),
            token = orthophotobot_token)
 
 usethis::ui_done("post tweet")

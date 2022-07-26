@@ -28,7 +28,7 @@ jobs:
     - name: Install packages
       run: |
         install.packages(c("dplyr","stringr", "magick","remotes", "rvest", "sf", "usethis", "magrittr"),type="binary")
-        install.packages("rtweet", repos = 'https://ropensci.r-universe.dev')
+        remotes::install_version("rtweet", version = "0.7.0", repos = "http://cran.us.r-project.org")
       shell: Rscript {0}
 
     # Run R script
