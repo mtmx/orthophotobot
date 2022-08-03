@@ -172,16 +172,43 @@ bdtopo_plage <- read_sf(request) %>% filter(importance <= 4 & !is.na(toponyme) )
   st_drop_geometry()
 
 
+# aéroports
+
+url$query <- list(service = "wfs",
+                  request = "GetFeature",
+                  typename = "BDTOPO_V3:aerodrome",
+                  srsName = "EPSG:2154"
+)
+
+request <- build_url(url)
+
+bdtopo_aero <- read_sf(request) %>% filter(!is.na(toponyme) ) %>%
+  select(nom_poi = toponyme ) %>%
+  mutate(type_poi = "aéroports") %>%
+  mutate(longitude_poi = map_dbl(geometrie, ~st_centroid(.x)[[1]]),
+         latitude_poi = map_dbl(geometrie, ~st_centroid(.x)[[2]])) %>%
+  st_drop_geometry()
+
+# gares
+
+bdtopo_gare <- st_read("https://ressources.data.sncf.com/explore/dataset/liste-des-gares/download?format=geojson&timezone=Europe/Berlin&use_labels_for_header=false") %>%
+  slice(1:500) %>%
+  filter(!is.na(libelle) ) %>%
+  select(nom_poi = libelle ) %>% mutate(nom_poi = paste0("Gare - ", nom_poi)) %>%
+  mutate(type_poi = "gares") %>%
+  mutate(longitude_poi = map_dbl(geometry, ~st_centroid(.x)[[1]]),
+         latitude_poi = map_dbl(geometry, ~st_centroid(.x)[[2]])) %>%
+  st_drop_geometry()
+
+
 # concaténation poi
 
 poi <- poi %>%
-  rbind.data.frame(bdtopo_chateau)  %>%
-  rbind.data.frame(bdtopo_plage ) %>%
-  rbind.data.frame(bdtopo_lotissements)
+  rbind.data.frame(bdtopo_gare)  %>%
+  rbind.data.frame(bdtopo_aero )
 
-rm(bdtopo_chateau)
-rm(bdtopo_plage)
-rm(bdtopo_lotissements)
+rm(bdtopo_gare)
+rm(bdtopo_aero)
 
 # suppression des poi hors contours communaux
 poi <- poi %>%
