@@ -171,6 +171,17 @@ bdtopo_plage <- read_sf(request) %>% filter(importance <= 4 & !is.na(toponyme) )
          latitude_poi = map_dbl(geometrie, ~st_centroid(.x)[[2]])) %>%
   st_drop_geometry()
 
+# gares
+
+bdtopo_gare <- st_read("https://ressources.data.sncf.com/explore/dataset/liste-des-gares/download?format=geojson&timezone=Europe/Berlin&use_labels_for_header=false") %>%
+  slice(1:500) %>%
+  filter(!is.na(libelle) ) %>%
+  select(nom_poi = libelle ) %>% mutate(nom_poi = paste0("Gare - ", nom_poi)) %>%
+  mutate(type_poi = "gares") %>%
+  mutate(longitude_poi = map_dbl(geometry, ~st_centroid(.x)[[1]]),
+         latitude_poi = map_dbl(geometry, ~st_centroid(.x)[[2]])) %>%
+  st_drop_geometry()
+
 
 # aéroports
 
@@ -189,26 +200,56 @@ bdtopo_aero <- read_sf(request) %>% filter(!is.na(toponyme) ) %>%
          latitude_poi = map_dbl(geometrie, ~st_centroid(.x)[[2]])) %>%
   st_drop_geometry()
 
-# gares
+# camping
 
-bdtopo_gare <- st_read("https://ressources.data.sncf.com/explore/dataset/liste-des-gares/download?format=geojson&timezone=Europe/Berlin&use_labels_for_header=false") %>%
-  slice(1:500) %>%
-  filter(!is.na(libelle) ) %>%
-  select(nom_poi = libelle ) %>% mutate(nom_poi = paste0("Gare - ", nom_poi)) %>%
-  mutate(type_poi = "gares") %>%
-  mutate(longitude_poi = map_dbl(geometry, ~st_centroid(.x)[[1]]),
-         latitude_poi = map_dbl(geometry, ~st_centroid(.x)[[2]])) %>%
+url$query <- list(service = "wfs",
+                  request = "GetFeature",
+                  typename = "BDTOPO_V3:zone_d_activite_ou_d_interet",
+                  srsName = "EPSG:2154",
+                  cql_filter="nature='Camping'"
+)
+
+request <- build_url(url)
+
+bdtopo_campings <- read_sf(request) %>%
+  filter(importance <= 4 & !is.na(toponyme) )  %>%
+  select(nom_poi = toponyme ) %>%
+  mutate(nom_poi = paste0("Camping - ",nom_poi)) %>%
+  mutate(type_poi = "campings") %>%
+  mutate(longitude_poi = map_dbl(geometrie, ~st_centroid(.x)[[1]]),
+         latitude_poi = map_dbl(geometrie, ~st_centroid(.x)[[2]])) %>%
   st_drop_geometry()
 
+
+# carrière
+
+url$query <- list(service = "wfs",
+                  request = "GetFeature",
+                  typename = "BDTOPO_V3:zone_d_activite_ou_d_interet",
+                  srsName = "EPSG:2154",
+                  cql_filter="nature='Carrière'"
+)
+
+request <- build_url(url)
+
+bdtopo_carrieres <- read_sf(request) %>%
+  filter(importance <= 4 & !is.na(toponyme) ) %>%
+  select(nom_poi = toponyme ) %>%
+  mutate(type_poi = "carrières") %>%
+  mutate(longitude_poi = map_dbl(geometrie, ~st_centroid(.x)[[1]]),
+         latitude_poi = map_dbl(geometrie, ~st_centroid(.x)[[2]])) %>%
+  st_drop_geometry()
 
 # concaténation poi
 
 poi <- poi %>%
-  rbind.data.frame(bdtopo_gare)  %>%
-  rbind.data.frame(bdtopo_aero )
+  rbind.data.frame(bdtopo_campings)  %>%
+  rbind.data.frame(bdtopo_aero ) %>%
+  rbind.data.frame(bdtopo_carrieres)
 
-rm(bdtopo_gare)
+rm(bdtopo_campings)
 rm(bdtopo_aero)
+rm(bdtopo_carrieres)
 
 # suppression des poi hors contours communaux
 poi <- poi %>%
