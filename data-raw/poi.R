@@ -196,6 +196,7 @@ request <- build_url(url)
 bdtopo_aero <- read_sf(request) %>% filter(!is.na(toponyme) ) %>%
   select(nom_poi = toponyme ) %>%
   mutate(type_poi = "aéroports") %>%
+  st_transform(4326) %>%
   mutate(longitude_poi = map_dbl(geometrie, ~st_centroid(.x)[[1]]),
          latitude_poi = map_dbl(geometrie, ~st_centroid(.x)[[2]])) %>%
   st_drop_geometry()
@@ -216,6 +217,7 @@ bdtopo_campings <- read_sf(request) %>%
   select(nom_poi = toponyme ) %>%
   mutate(nom_poi = paste0("Camping - ",nom_poi)) %>%
   mutate(type_poi = "campings") %>%
+  st_transform(4326) %>%
   mutate(longitude_poi = map_dbl(geometrie, ~st_centroid(.x)[[1]]),
          latitude_poi = map_dbl(geometrie, ~st_centroid(.x)[[2]])) %>%
   st_drop_geometry()
@@ -236,6 +238,7 @@ bdtopo_carrieres <- read_sf(request) %>%
   filter(importance <= 4 & !is.na(toponyme) ) %>%
   select(nom_poi = toponyme ) %>%
   mutate(type_poi = "carrières") %>%
+  st_transform(4326) %>%
   mutate(longitude_poi = map_dbl(geometrie, ~st_centroid(.x)[[1]]),
          latitude_poi = map_dbl(geometrie, ~st_centroid(.x)[[2]])) %>%
   st_drop_geometry()
