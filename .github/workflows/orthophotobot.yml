@@ -7,7 +7,7 @@ on:
 #on:
 #  push:
 #    branches:
-#      - master
+#      - main
 
 jobs:
   orthophotobotpost:
@@ -21,8 +21,8 @@ jobs:
       GITHUB_PAT: ${{ secrets.TOKEN_GITHUB }}
     # Load repo and install R
     steps:
-    - uses: actions/checkout@master
-    - uses: r-lib/actions/setup-r@master
+    - uses: actions/checkout@main
+    - uses: r-lib/actions/setup-r@main
 
      # Set-up R
     - name: Install packages
@@ -42,7 +42,7 @@ jobs:
         git config --local user.email "actions@github.com"
         git add data/*
         git commit -am "GH ACTION OK $(date)"
-        git push origin master
+        git push origin main
       env:
         REPO_KEY: ${{secrets.TOKEN_GITHUB}}
         env: github-actions
