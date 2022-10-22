@@ -243,16 +243,58 @@ bdtopo_carrieres <- read_sf(request) %>%
          latitude_poi = map_dbl(geometrie, ~st_centroid(.x)[[2]])) %>%
   st_drop_geometry()
 
+
+# quai
+
+url$query <- list(service = "wfs",
+                  request = "GetFeature",
+                  typename = "BDTOPO_V3:construction_lineaire",
+                  srsName = "EPSG:2154",
+                  cql_filter="statut_du_toponyme='Validé' and nature='Quai'"
+)
+
+request <- build_url(url)
+
+bdtopo_quais <- read_sf(request) %>%
+  select(nom_poi = toponyme ) %>%
+  mutate(type_poi = "quais") %>%
+  st_transform(4326) %>%
+  mutate(longitude_poi = map_dbl(geometrie, ~st_centroid(.x)[[1]]),
+         latitude_poi = map_dbl(geometrie, ~st_centroid(.x)[[2]])) %>%
+  st_drop_geometry() %>%
+  distinct(., nom_poi, .keep_all = T)
+
+
+# lycées
+
+url$query <- list(service = "wfs",
+                  request = "GetFeature",
+                  typename = "BDTOPO_V3:zone_d_activite_ou_d_interet",
+                  srsName = "EPSG:2154",
+                  cql_filter="nature='Lycée'"
+)
+
+request <- build_url(url)
+
+bdtopo_lycees <- read_sf(request) %>% filter(importance <= 5 & !is.na(toponyme) & !is.na(nature_detaillee) )  %>%
+  sample_n(200)  %>%
+  select(nom_poi = toponyme ) %>%
+  mutate(type_poi = "lycees") %>%
+  st_transform(4326) %>%
+  mutate(longitude_poi = map_dbl(geometrie, ~st_centroid(.x)[[1]]),
+         latitude_poi = map_dbl(geometrie, ~st_centroid(.x)[[2]])) %>%
+  st_drop_geometry()
+
+
+
 # concaténation poi
 
 poi <- poi %>%
-  rbind.data.frame(bdtopo_campings)  %>%
-  rbind.data.frame(bdtopo_aero ) %>%
-  rbind.data.frame(bdtopo_carrieres)
+  rbind.data.frame(bdtopo_quais)  %>%
+  rbind.data.frame(bdtopo_lycees )
 
-rm(bdtopo_campings)
-rm(bdtopo_aero)
-rm(bdtopo_carrieres)
+rm(bdtopo_quais)
+rm(bdtopo_lycees)
 
 # suppression des poi hors contours communaux
 poi <- poi %>%
@@ -262,6 +304,16 @@ poi <- poi %>%
   filter(!is.na(INSEE_COM)) %>%
   st_drop_geometry() %>%
   select(c(nom_poi, latitude_poi, longitude_poi, type_poi))
+
+# suppression des types de poi trop nombreux
+poi <- poi %>% filter(type_poi %in% "campings") %>%
+  sample_n(250) %>%
+  rbind.data.frame(poi %>% filter(type_poi %in% "aéroports") %>%
+                     sample_n(250)) %>%
+  rbind.data.frame(poi %>% filter(type_poi %in% "gares") %>%
+                     sample_n(250)) %>%
+  rbind.data.frame(poi %>% filter(!type_poi %in% c("campings","aéroports","gares")))
+
 
 
 usethis::use_data(poi, overwrite = TRUE)
